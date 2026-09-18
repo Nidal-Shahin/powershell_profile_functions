@@ -122,7 +122,7 @@ To make the script accessible globally across all projects, add it to your globa
 
 ## 3. Keyboard Shortcut Configuration (`keybindings.json`)
 
-To bind the task to a keyboard shortcut (e.g., `Ctrl + Alt + T`):
+To bind the task to a keyboard shortcut (e.g., `Ctrl + d Ctrl + T`):
 
 1. Press **`Ctrl + Shift + P`**.
 2. Select **`Preferences: Open Keyboard Shortcuts (JSON)`**.
@@ -131,7 +131,7 @@ To bind the task to a keyboard shortcut (e.g., `Ctrl + Alt + T`):
 ```json
 [
   {
-    "key": "ctrl+alt+t",
+    "key": "ctrl+d ctrl+t",
     "command": "workbench.action.tasks.runTask",
     "args": "Generate Directory Tree"
   }
