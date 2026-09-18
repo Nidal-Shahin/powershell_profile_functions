@@ -1,0 +1,111 @@
+function edit-profile { notepad $PROFILE }
+
+function save-profile { . $PROFILE }
+
+function dir_tree {
+    param(
+        [string[]]$Exclude = @('node_modules', '.firebase','out','.next', '.git', 'dist', 'build', '.vs')
+    )
+
+    $outPath = Join-Path $PWD "dir_tree.txt"
+
+    function Get-TreeLines {
+        param(
+            [string]$Path,
+            [string]$Prefix = ''
+        )
+
+        $items = Get-ChildItem -LiteralPath $Path | Where-Object {
+            $item = $_
+            $skip = $false
+            foreach ($folder in $Exclude) {
+                if ($item.Name -eq $folder) {
+                    $skip = $true
+                    break
+                }
+            }
+            -not $skip
+        } | Sort-Object PSIsContainer -Descending
+
+        for ($i = 0; $i -lt $items.Count; $i++) {
+            $item = $items[$i]
+            $isLast = ($i -eq ($items.Count - 1))
+
+            $branch = if ($isLast) { '\-- ' } else { '+-- ' }
+            $childPrefix = if ($isLast) { '    ' } else { '|   ' }
+
+            $label = if ($item.PSIsContainer) { "$($item.Name)/" } else { $item.Name }
+            "$Prefix$branch$label"
+
+            if ($item.PSIsContainer) {
+                Get-TreeLines -Path $item.FullName -Prefix "$Prefix$childPrefix"
+            }
+        }
+    }
+
+    $rootName = Split-Path $PWD -Leaf
+    $lines  = @("$rootName/")
+    $lines += Get-TreeLines -Path $PWD
+    $lines | Set-Content -Path $outPath -Encoding UTF8
+
+    $exList = $Exclude -join ', '
+    Write-Host "Created 'dir_tree.txt' (excluded: $exList)" -ForegroundColor Green
+}
+
+function dir_tree2 {
+    $defaultExcludes = @('node_modules', '.firebase','out','.next', '.git', 'dist', 'build', '.vs')
+    
+    # Prompt the user for input
+    $userInput = Read-Host "Enter folders to exclude (comma-separated) [Default: $($defaultExcludes -join ', ')]"
+    
+    # Use user input if provided, otherwise use defaults
+    if ([string]::IsNullOrWhiteSpace($userInput)) {
+        $Exclude = $defaultExcludes
+    } else {
+        $Exclude = $userInput.Split(',') | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' }
+    }
+
+    $outPath = Join-Path $PWD "dir_tree.txt"
+
+    function Get-TreeLines {
+        param(
+            [string]$Path,
+            [string]$Prefix = ''
+        )
+
+        $items = Get-ChildItem -LiteralPath $Path | Where-Object {
+            $item = $_
+            $skip = $false
+            foreach ($folder in $Exclude) {
+                if ($item.Name -eq $folder) {
+                    $skip = $true
+                    break
+                }
+            }
+            -not $skip
+        } | Sort-Object PSIsContainer -Descending
+
+        for ($i = 0; $i -lt $items.Count; $i++) {
+            $item = $items[$i]
+            $isLast = ($i -eq ($items.Count - 1))
+
+            $branch = if ($isLast) { '\-- ' } else { '+-- ' }
+            $childPrefix = if ($isLast) { '    ' } else { '|   ' }
+
+            $label = if ($item.PSIsContainer) { "$($item.Name)/" } else { $item.Name }
+            "$Prefix$branch$label"
+
+            if ($item.PSIsContainer) {
+                Get-TreeLines -Path $item.FullName -Prefix "$Prefix$childPrefix"
+            }
+        }
+    }
+
+    $rootName = Split-Path $PWD -Leaf
+    $lines  = @("$rootName/")
+    $lines += Get-TreeLines -Path $PWD
+    $lines | Set-Content -Path $outPath -Encoding UTF8
+
+    $exList = $Exclude -join ', '
+    Write-Host "Created 'dir_tree.txt' (excluded: $exList)" -ForegroundColor Green
+}
