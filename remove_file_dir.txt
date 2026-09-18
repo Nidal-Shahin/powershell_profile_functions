@@ -1,0 +1,8 @@
+# Delete the profile script file itself
+if (Test-Path $PROFILE) { Remove-Item $PROFILE -Force }
+
+# Remove the empty PowerShell folder in your Documents directory
+$profileFolder = Split-Path $PROFILE
+if ((Test-Path $profileFolder) -and ((Get-ChildItem $profileFolder).Count -eq 0)) { 
+    Remove-Item $profileFolder -Force 
+}
