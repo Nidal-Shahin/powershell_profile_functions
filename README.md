@@ -144,5 +144,5 @@ To bind the task to a keyboard shortcut (e.g., `Ctrl + d Ctrl + T`):
 ## Usage
 
 1. Open any project workspace in VS Code.
-2. Press **`Ctrl + Alt + T`** (or press `Ctrl + Shift + P` > **`Tasks: Run Task`** > **`Generate Directory Tree`**).
+2. Press **`Ctrl + d Ctrl + T`** (or press `Ctrl + Shift + P` > **`Tasks: Run Task`** > **`Generate Directory Tree`**).
 3. The script will execute and output a fresh `dir_tree.txt` file in your root workspace directory.
